@@ -5,15 +5,15 @@ function setup(){
 }
 
 function shift (newPage) {
-    select(newPage).addClass('show')
     select(currentPage).removeClass('show')
+    select(newPage).addClass('show')
     currentPage = newPage
 }    
 
 function keyPressed(key) {
-    function keyPressed(key) {
-        let pages = selectAll('.page')
-        pages[key.key] && shift('#' + pages[key.key].elt.id)
-    }
+    let pageNumber = key.key - 1
+    let pages = selectAll('.page')
+    pages[pageNumber] && shift('#' + pages[pageNumber].elt.id)
 }
+
 
