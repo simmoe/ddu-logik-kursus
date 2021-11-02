@@ -1,7 +1,7 @@
 let currentPage = '#side-1'
 
 function setup(){
-
+    
 }
 
 function shift (newPage) {
