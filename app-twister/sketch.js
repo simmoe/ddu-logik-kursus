@@ -1,4 +1,4 @@
-//currentPage fortæller vhilken sider appen er på 
+//currentPage fortæller hvilken side appen er på når den starter 
 let currentPage = '#names'
 
 //players er et array med alle spillerne i - vi lægger lige et par "testspillere" ind med det samme
@@ -7,53 +7,62 @@ let players = ['anna', 'tina', 'kim', 'poul']
 //currentPlayer er den spiller som har tur 
 let currentPlayer = 0
 
-//
+//rounds tæller hvor mange runder spillerne har klaret
+let rounds = 0
+
+//bodyparts er alle de kropsdele der skal være med i spillet 
 let bodyparts = ['venstre knæ', 'højre knæ', 'venstre skulder', 'højre skulder', 'venstre albue', 'højre albue',  'venstre fod', 'højre fod', 'hoved']
+
+//playerhands er de kropsdele den spiller som har tur, skal bruge
 let playerhands = ['venstre hånd', 'højre hånd']
 
 function setup(){
-    select('#addPlayer').mousePressed( () => {
-        //to do - check input field
-        let name = select('#name').value()
-        players.push(name)
-        console.log(players)
-        select('#name').value('')
-        select('#playerList').html(players.join('<br>'))
-    })
+    //vi begynder lige med at vise de spillere vi allerede har lagt ind i vores liste
+    select('#playerList').html(players.join('<br>'))
 
-    select('#start').mousePressed( () => {
-        turn()
-        shift('#task') 
-    })
+    //når der trykkes på knappen med id='addPlayer', kaldes funktionen addPlayer (den er længere nede)
+    select('#addPlayer').mousePressed( addPlayer)
 
+    //når der trykkes på knappen med id='start', kaldes funktionen begin (den er længere nede)
+    select('#start').mousePressed( begin )
+
+    //når der trykkes på knappen med id='nextTurn', kaldes funktionen turn (den er længere nede)
     select('#nextTurn').mousePressed(turn)
+
+    //når der trykkes på knappen med id='toEnd', kaldes funktionen finish (den er længere nede)
     select('#toEnd').mousePressed(finish)
-    select('#new').mousePressed( () => {
-        shift('#names') 
-        setTimeout(()=>shift('#names'), 2000)
-    })
+
+    //når der trykkes på knappen med id='new', kaldes funktionen newGame (den er længere nede)
+    select('#new').mousePressed( newGame)
+
 }
+
 function turn () {
+    //hver gang denn funktion kaldes, skal der tælles en ny runde
+    rounds += 1
+
+    let playerhand = random(playerhands)
+    let bodypart = random(bodyparts)
+    let nextPlayer = findNextPlayer()
+
+    //udkommenter linjerne nedenfor hvis du vil holde øje med værdierne 
+    //console.log(playerhand)
+    //console.log(bodypart)
+    //console.log(nextPlayer)
+
+    let description = players[currentPlayer] + ', tag fat i ' + nextPlayer + '\'s ' + bodypart + ' med ' + playerhand 
+    select('#description').html('')
+    select('#spinner').show()
+    select('#turnButtons').hide()
+
+    //vi skifter til den næste spiller i listen - men hvis alle spillere har haft tur, begynder vi forfra
     if(currentPlayer < players.length - 1){
         currentPlayer = currentPlayer + 1
     }else{
         currentPlayer = 0
     }
 
-    let playerhand = random(playerhands)
-    let bodypart = random(bodyparts)
-    let nextPlayer = findNextPlayer()
-
-    console.log(playerhand)
-    console.log(bodypart)
-    console.log(nextPlayer)
-
-    let description = players[currentPlayer] + ', tag fat i ' + nextPlayer + '\'s ' + bodypart + ' med ' + playerhand 
-    select('#description').html('')
-    select('#spinner').show()
-    select('#turnButtons').hide()
-    
-    
+    //setTimeout gør noget efter et antal millisekunder, her 200
     setTimeout(()=>{
         select('#description').html(description)
         select('#spinner').hide()
@@ -61,6 +70,7 @@ function turn () {
     }, 200)
 }
 
+//finder en spiller som IKKE er den spiller der har tur nu
 function findNextPlayer () {
     let randomPlayer = random(players)
     if(players[currentPlayer]!= randomPlayer){
@@ -70,17 +80,32 @@ function findNextPlayer () {
     }
 }
 
-function finish(){
-    let string = 'Okay ' + players.join(' og ') + '- tak for spillet! I klarede x runder' 
-    select('#thanks').html(string)
+function newGame(){
+    rounds = 0
     players = []
     select('#playerList').html('')
+    shift('#names') 
+    shift('#names')
+}
+
+function finish(){
+    let string = 'Okay ' + players.join(' og ') + '- tak for spillet! I klarede ' + rounds + ' runder' 
+    select('#thanks').html(string)
     shift('#end')
 }
 
+function addPlayer() {
+    //to do - check input field
+    let name = select('#name').value()
+    players.push(name)
+    select('#name').value('')
+    select('#playerList').html(players.join('<br>'))
+}
 
-
-
+function begin(){
+    turn()
+    shift('#task') 
+}
 
 
 
